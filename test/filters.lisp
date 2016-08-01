@@ -6,6 +6,30 @@
   (apply (djula::find-filter name) args))
 
 (def-test filters (:compile-at :definition-time)
+
+  ;; Test correct handling of nil values with default. Also testing correct
+  ;; white space stripping.
+  (is (string= "bar"
+               (let ((template (djula::compile-string "{{ foo | default: \"bar\" }}")))
+                 (djula:render-template* template nil :foo nil))))
+
+  ;; Test simple pluralize exmaples
+  (is (string= "foos"
+               (let ((template (djula::compile-string "foo{{ foo-amount |pluralize: \"s\" }}")))
+                 (djula:render-template* template nil :foo-amount 2))))
+  (is (string= "foo"
+               (let ((template (djula::compile-string "foo{{ foo-amount |pluralize: \"s\" }}")))
+                 (djula:render-template* template nil :foo-amount 1))))
+  ;; Test pluralize with multiple options
+  (is (string= "foo-d"
+               (let ((template (djula::compile-string "foo{{ foo-amount |pluralize: (\"-d\" . \"-s\") }}")))
+                 (djula:render-template* template nil :foo-amount 1))))
+  (is (string= "foo-s"
+               (let ((template (djula::compile-string "foo{{ foo-amount |pluralize: (\"-d\" . \"-s\") }}")))
+                 (djula:render-template* template nil :foo-amount -2))))
+
+
+
   (is (string= "Capfirst" (filter :capfirst "capfirst")))
   (is (string= "cutout"   (filter :cut "cutITout" "IT")))
   (is (string= "default"  (filter :default "" "default")))
