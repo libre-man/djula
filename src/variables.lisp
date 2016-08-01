@@ -6,7 +6,10 @@
 (defun parse-filter-string (string)
   (if-let ((colon (position #\: string)))
     (list (make-keyword (string-upcase (subseq string 0 colon)))
-          (string-trim '(#\") (subseq string (1+ colon))))
+          (string-trim '(#\")
+                       (string-trim '(#\Space #\Newline #\Tab)
+                                    (subseq string
+                                            (1+ colon)))))
     (list (make-keyword (string-upcase string)))))
 
 (defun integer-or-keyword (string)
