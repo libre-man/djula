@@ -99,7 +99,7 @@
      timestamp
      :format
      (or (and format
-	      (let ((read-format (read-from-string format)))
+        (let ((read-format (read-from-string format))) ;
 		(if (symbolp read-format)
 		    (symbol-value read-format)
 		    read-format)))
@@ -131,7 +131,17 @@
      timestamp
      :format
      (or (and format (read-from-string format))
-	 local-time:+iso-8601-format+))))
+   local-time:+iso-8601-format+))))
+
+(def-filter :pluralize (it arg)
+  (break "~a ~a" it arg)
+  (let* ((read-arg (read-from-string arg))
+         (extensions (if (listp read-arg)
+                         read-arg
+                         (cons "" arg))))
+    (if (> (abs it) 1)
+        (cdr extensions)
+        "")))
 
 (def-filter :join (it sep)
   (join sep (mapcar #'princ-to-string it)))

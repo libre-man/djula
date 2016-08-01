@@ -141,6 +141,7 @@
       (:export #:date
                #:force-escape
                #:datetime
+               #:pluralize
                #:trans
                #:safe
                #:escape
